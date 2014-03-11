@@ -4,14 +4,16 @@ package gogithub
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 )
 
 // A Client represents a GitHub API client.
 type Client struct {
-	ID     string
-	Secret string
+	ID          string
+	Secret      string
+	AccessToken string
 }
 
 // An AccessTokenResponse returns access token API's response data.
@@ -21,28 +23,32 @@ type AccessTokenResponse struct {
 	TokenType   string `json:"token_type"`
 }
 
-// AccessToken calls access token API and returns the response data.
-func (c *Client) AccessToken(code string) (int, *AccessTokenResponse, error) {
+// SetAccessToken calls access token API, gets an access token and set it to the client.
+func (c *Client) SetAccessToken(code string) error {
 	param := map[string]string{"client_id": c.ID, "client_secret": c.Secret, "code": code}
 	b, err := json.Marshal(param)
 	if err != nil {
-		return 0, nil, err
+		return err
 	}
 	res, err := http.Post("https://github.com/login/oauth/access_token", "application/json", bytes.NewReader(b))
 	if err != nil {
-		return 0, nil, err
+		return err
 	}
-	sCode := res.StatusCode
 	body, err := ioutil.ReadAll(res.Body)
 	res.Body.Close()
 	if err != nil {
-		return sCode, nil, err
+		return err
 	}
-	var tokenRes AccessTokenResponse
-	if err := json.Unmarshal(body, &tokenRes); err != nil {
-		return sCode, nil, err
+	m := make(map[string]string)
+	if err := json.Unmarshal(body, &m); err != nil {
+		return err
 	}
-	return sCode, &tokenRes, nil
+	accessToken, prs := m["access_token"]
+	if !prs {
+		return fmt.Errorf("could not get an access token. [response: %s]", string(body))
+	}
+	c.AccessToken = accessToken
+	return nil
 }
 
 // NewClient generates a client and returns it.
