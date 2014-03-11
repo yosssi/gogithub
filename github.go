@@ -51,6 +51,8 @@ func (c *Client) SetAccessToken(code string) error {
 	return nil
 }
 
+// GetAuthenticatedUser gets the authenticated user and returns it.
+
 // NewClient generates a client and returns it.
 func NewClient(id string, secret string) *Client {
 	return &Client{ID: id, Secret: secret}
