@@ -19,7 +19,7 @@ type User struct {
 	GravatarID        string      `json:"gravatar_id"`
 	Hireable          bool        `json:"hireable"`
 	HtmlURL           string      `json:"html_url"`
-	ID                string      `json:"id"`
+	ID                float64     `json:"id"`
 	Location          string      `json:"location"`
 	Login             string      `json:"login"`
 	Name              string      `json:"name"`
