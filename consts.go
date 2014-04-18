@@ -1,8 +1,11 @@
 package gogithub
 
 const (
-	NORMAL_URL             = "https://github.com"
-	API_URL                = "https://api.github.com"
-	ACCESS_TOKEN_URL       = NORMAL_URL + "/login/oauth/access_token"
-	AUTHENTICATED_USER_URL = API_URL + "/user"
+	NormalURL            = "https://github.com"
+	APIURL               = "https://api.github.com"
+	AccessTokenURL       = NormalURL + "/login/oauth/access_token"
+	AuthenticatedUserURL = APIURL + "/user"
+	URLParamPrefix       = "?"
+	ParamKeyAccessToken  = "access_token"
+	GetContentsPath      = APIURL + "/repos/%s/%s/contents/%s"
 )
