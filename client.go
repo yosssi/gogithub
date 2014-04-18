@@ -71,7 +71,7 @@ func (c *Client) AccessTokenURLParam() string {
 	if c.AccessToken == "" {
 		return ""
 	}
-	return URLParamPrefix + ParamKeyAccessToken + c.AccessToken
+	return URLParamPrefix + ParamKeyAccessToken + "=" + c.AccessToken
 }
 
 // NewClient generates a client and returns it.
