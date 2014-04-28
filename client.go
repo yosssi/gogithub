@@ -68,20 +68,17 @@ func (c *Client) GetContents(owner string, repo string, path string) (*Contents,
 }
 
 // GetContent gets the content of the specified path.
-func (c *Client) GetContent(owner, repo, branch, path string) (string, error) {
+func (c *Client) GetContent(owner, repo, branch, path string) (string, int, error) {
 	res, err := http.Get(fmt.Sprintf(GetContentPath, owner, repo, branch, path))
 	if err != nil {
-		return "", err
-	}
-	if code := res.StatusCode; code != http.StatusOK {
-		return "", fmt.Errorf("response status code is not OK. [status code: %d]", code)
+		return "", 0, err
 	}
 	b, err := ioutil.ReadAll(res.Body)
 	res.Body.Close()
 	if err != nil {
-		return "", err
+		return "", res.StatusCode, err
 	}
-	return string(b), nil
+	return string(b), res.StatusCode, nil
 }
 
 // AccessTokenURLParam returns the access token url parameter.
