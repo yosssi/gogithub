@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -64,6 +65,23 @@ func (c *Client) GetContents(owner string, repo string, path string) (*Contents,
 		return nil, err
 	}
 	return contents, nil
+}
+
+// GetContent gets the content of the specified path.
+func (c *Client) GetContent(owner, repo, branch, path string) (string, error) {
+	res, err := http.Get(fmt.Sprintf(GetContentPath, owner, repo, branch, path))
+	if err != nil {
+		return "", err
+	}
+	if code := res.StatusCode; code != http.StatusOK {
+		return "", fmt.Errorf("response status code is not OK. [status code: %d]", code)
+	}
+	b, err := ioutil.ReadAll(res.Body)
+	res.Body.Close()
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
 }
 
 // AccessTokenURLParam returns the access token url parameter.

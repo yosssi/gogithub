@@ -8,4 +8,5 @@ const (
 	URLParamPrefix       = "?"
 	ParamKeyAccessToken  = "access_token"
 	GetContentsPath      = APIURL + "/repos/%s/%s/contents/%s"
+	GetContentPath       = "https://raw.githubusercontent.com/%s/%s/%s/%s"
 )
