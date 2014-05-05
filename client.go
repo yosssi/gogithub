@@ -41,7 +41,7 @@ func (c *Client) SetAccessToken(code string) error {
 // GetAuthenticatedUser gets the authenticated user and returns it.
 func (c *Client) GetAuthenticatedUser() (*User, error) {
 	if c.AccessToken == "" {
-		return nil, fmt.Errorf("access token is not set to the client.")
+		return nil, fmt.Errorf("access token is not set to the client")
 	}
 	res, err := http.Get(AuthenticatedUserURL + c.AccessTokenURLParam())
 	if err != nil {
@@ -56,7 +56,7 @@ func (c *Client) GetAuthenticatedUser() (*User, error) {
 
 // GetContents gets the contents of the specified path.
 func (c *Client) GetContents(owner string, repo string, path string) (*Contents, error) {
-	res, err := http.Get(fmt.Sprintf(GetContentsPath, owner, repo, path) + c.AccessTokenURLParam())
+	res, err := http.Get(fmt.Sprintf(GetContentsURL, owner, repo, path) + c.AccessTokenURLParam())
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +69,7 @@ func (c *Client) GetContents(owner string, repo string, path string) (*Contents,
 
 // GetContent gets the content of the specified path.
 func (c *Client) GetContent(owner, repo, branch, path string) (string, int, error) {
-	res, err := http.Get(fmt.Sprintf(GetContentPath, owner, repo, branch, path))
+	res, err := http.Get(fmt.Sprintf(GetContentURL, owner, repo, branch, path))
 	if err != nil {
 		return "", 0, err
 	}
@@ -79,6 +79,23 @@ func (c *Client) GetContent(owner, repo, branch, path string) (string, int, erro
 		return "", res.StatusCode, err
 	}
 	return string(b), res.StatusCode, nil
+}
+
+// SearchRepositories calls the search repositories api.
+func (c *Client) SearchRepositories(q string) (*SearchRepositoriesResult, error) {
+	url := SearchRepositoriesURL
+	if q != "" {
+		url += URLParamPrefix + q
+	}
+	res, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	searchRepositoriesResult := &SearchRepositoriesResult{}
+	if err := parseResponse(res, searchRepositoriesResult); err != nil {
+		return nil, err
+	}
+	return searchRepositoriesResult, nil
 }
 
 // AccessTokenURLParam returns the access token url parameter.
